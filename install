@@ -239,7 +239,7 @@ echo "=================================================="
 echo -e "${NC}"
 
 # === Create wallpaper folder ===
-if [[ -d "$HOME/Pictures/WallpaperPC" ]];~then
+if [[ -d "$HOME/Pictures/WallpaperPC" ]]; then
     echo -e "${YELLOW}Backing up Previus ~/Pictures/WallpaperPC -> $HOME/Pictures/PrevWallpaperPC${NC}"
     cp -r "$HOME/Pictures/WallpaperPC" "$HOME/Pictures/PrevWallpaperPC"
 fi
