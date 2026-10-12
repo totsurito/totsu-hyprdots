@@ -197,12 +197,12 @@ done
 
 # === Copy New Configs ===
 mkdir -p "$HOME/.config"
-cp -r .config/* "$HOME/.config/"
+cp -r ".config/." "$HOME/.config/"
 
 # === Copy Scripts ===
 mkdir -p "$HOME/.local/bin"
-cp -r ".local/bin/"* "$HOME/.local/bin" 2>/dev/null || true
-cp -r ".mpd/"* "$HOME/.mpd" 2>/dev/null || true
+cp -r ".local/bin/." "$HOME/.local/bin" 2>/dev/null || true
+cp -r ".mpd/." "$HOME/.mpd" 2>/dev/null || true
 chmod +x "$HOME/.local/bin/"* 2>/dev/null || true
 chmod +x "$HOME/.mpd/"* 2>/dev/null || true
 
