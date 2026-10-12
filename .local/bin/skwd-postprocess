@@ -1,0 +1,18 @@
+#!/bin/bash
+
+for ext in jpg jpeg png; do
+    if [[ -f "$HOME/.cache/skwd-wall/wallpaper/current.$ext" ]]; then
+        WALLPAPER="$HOME/.cache/skwd-wall/wallpaper/current.$ext"
+        break
+    fi
+done
+if [[ ! -f "$WALLPAPER" ]]; then
+    echo "Wallpaper no encontrar: $WALLPAPER"
+    exit 1
+fi
+
+echo "Wallpaper Update..."
+
+cp "$WALLPAPER" "$HOME/.config/hypr/hyprlock.jpg"
+
+echo "Ready >:)"

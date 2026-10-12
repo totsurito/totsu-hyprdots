@@ -1,0 +1,59 @@
+{
+  "logo": {
+    "source": "~/.config/fastfetch/Arknights.webp",
+    "height": 12
+  },
+  "display": {
+    "separator": " "
+  },
+  "modules": [
+    {
+      "type": "custom",
+      "key": "\u001b[37mDoctor, you can't rest now! There's still work to be done."
+    },
+    {
+      "type": "custom",
+      "key": "\u001b[37m╭────────────╮"
+    },
+    {
+      "type": "title",
+      "key": "\u001b[37m│ \u001b[90m User     \u001b[37m│"
+    },
+    {
+      "type": "custom",
+      "key": "\u001b[37m├────────────┤",
+    },
+    {
+      "type": "os",
+      "key": "\u001b[37m│ \u001b[31m OS       \u001b[37m│"
+    },
+    {
+      "type": "kernel",
+      "key": "\u001b[37m│ \u001b[32m Kernel   \u001b[37m│"
+    },
+    {
+      "type": "shell",
+      "key": "\u001b[37m│ \u001b[33m Shell    \u001b[37m│"
+    },
+    {
+      "type": "display",
+      "key": "\u001b[37m│ \u001b[34m󰍹 Display  \u001b[37m│"
+    },
+    {
+      "type": "wm",
+      "key": "\u001b[37m│ \u001b[35m WM       \u001b[37m│"
+    },
+    {
+      "type": "terminal",
+      "key": "\u001b[37m│ \u001b[36m󰆍 Terminal \u001b[37m│"
+    },
+    {
+      "type": "custom",
+      "key": "\u001b[37m╰────────────╯"
+    },
+    {
+      "type": "custom",
+      "key": "\u001b[90m  \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m "
+    }
+  ]
+}

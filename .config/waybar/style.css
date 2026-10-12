@@ -1,0 +1,170 @@
+@import "skwd-theme.css";
+
+* {
+  font-family: JetbrainsMono Nerd Font;
+  font-size: 12px;
+  min-height: 0;
+}
+
+#waybar {
+  background: transparent;
+  color: @fg;
+}
+
+#workspaces {
+  border-radius: 1rem;
+  background-color: @bg-widget;
+  margin: 5px 0 0 1rem;
+}
+
+#workspaces button {
+  color: @secondary;
+  border-radius: 1rem;
+}
+
+#workspaces button.active {
+  color: @accent-bright;
+  border-radius: 1rem;
+}
+
+#workspaces button:hover {
+  color: @accent-dim;
+  border-radius: 1rem;
+}
+
+tooltip {
+  background-color: @bg-deep;
+  border: 1.5px solid alpha(@warning, 0.4);
+  border-radius: 0.8rem;
+  padding: 0.6rem;
+  color: @fg;
+}
+
+tooltip label {
+  color: @fg;
+  font-size: 13px;
+}
+
+#mpd {
+  background-color: rgba(0, 0, 0, 0.65);
+  padding: 0 2rem 0 2rem;
+  margin: 5px 0 0 0;
+  border-radius: 1rem;
+}
+
+#network,
+#bluetooth {
+  background-color: @bg-widget;
+  padding: 0.5rem 0.5rem;
+  margin: 5px 0 0 0;
+}
+
+
+#cpu,
+#memory {
+  background-color: @bg-widget;
+  padding: 0.5rem 0.5rem;
+  margin: 5px 0 0 0;
+}
+
+#tray,
+#backlight,
+#clock,
+#battery,
+#pulseaudio.microphone,
+#pulseaudio,
+#custom-lock,
+#custom-power {
+  background-color: @bg-widget;
+  padding: 0.5rem 0.5rem;
+  margin: 5px 0 0 0;
+}
+
+#clock {
+  color: @accent;
+  border-radius: 0px 1rem 1rem 0px;
+  margin-right: 1rem;
+  padding-right: 1rem;
+}
+
+#bluetooth {
+  color: @accent;
+  border-radius: 0px 1rem 1rem 0px;
+  padding-right: 1rem;
+}
+
+#network {
+  color: @success;
+  border-radius: 1rem 0px 0px 1rem;
+  padding-left: 1rem;
+
+}
+
+#battery {
+  color: @success;
+}
+
+#cpu {
+  color: @secondary;
+  border-radius: 1rem 0px 0px 1rem;
+  padding-left: 1rem;
+  margin-left: 1rem;
+}
+
+#memory {
+  color: @info;
+  border-radius: 0px 1rem 1rem 0px;
+  padding-right: 1rem;
+  margin-right: 1rem;
+}
+
+#battery.charging {
+  color: @success;
+}
+
+#battery.warning:not(.charging) {
+  color: @danger;
+}
+
+#backlight {
+  color: @warning;
+}
+
+#pulseaudio.microphone {
+  color: @muted;
+}
+
+#backlight, #battery, #pulseaudio.microphone {
+  border-radius: 0;
+}
+
+#pulseaudio {
+  color: @muted;
+  border-radius: 1rem 0px 0px 1rem;
+  margin-left: 1rem;
+  padding-left: 1rem;
+}
+
+#custom-lock {
+  border-radius: 1rem 0px 0px 1rem;
+  color: @secondary;
+  padding-left: 1rem;
+}
+
+#custom-power {
+  margin-right: 1rem;
+  padding-right: 1rem;
+  border-radius: 0px 1rem 1rem 0px;
+  color: @danger;
+}
+
+#tray {
+  margin-right: 1rem;
+  border-radius: 1rem;
+}
+
+#custom-cava {
+  font-family: "Wavefont", sans-serif;
+    font-size: 21px;
+    font-weight: bold;
+}

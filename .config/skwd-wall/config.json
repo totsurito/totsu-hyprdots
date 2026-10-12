@@ -1,0 +1,160 @@
+{
+  "compositor": "hyprland",
+  "monitor": "",
+  "general": {
+    "locale": "",
+    "closeOnSelection": false,
+    "reopenAtLastSelection": false,
+    "randomIncludeWE": false,
+    "filterBarAlwaysVisible": false,
+    "randomIncludeVideo": false,
+    "randomIncludeFavourites": false,
+    "randomInterval": 300,
+    "wallpaperPerMonitor": false
+  },
+  "paths": {
+    "wallpaper": "/home/rito/Pictures/WallpaperPC",
+    "videoWallpaper": "~/videowalls",
+    "cache": "",
+    "templates": "",
+    "scripts": "",
+    "steam": "",
+    "steamWorkshop": "",
+    "steamWeAssets": ""
+  },
+  "features": {
+    "matugen": true,
+    "ollama": false,
+    "steam": false,
+    "wallhaven": false,
+    "videoPreview": true
+  },
+  "colorSource": "magick",
+  "ollama": {
+    "url": "http://localhost:11434",
+    "model": "gemma3:4b",
+    "consolidateEnabled": true
+  },
+  "steam": {
+    "apiKey": "",
+    "username": ""
+  },
+  "wallhaven": {
+    "apiKey": ""
+  },
+  "matugen": {
+    "schemeType": "scheme-content",
+    "mode": "dark",
+    "colorIndex": 0,
+    "contrast": 0
+  },
+  "integrations": [
+    {
+      "_comment": "Built-in: MD3 colors for the shell UI (always needed)",
+      "name": "skwd-wall",
+      "template": "quickshell-colors.json",
+      "output": "colors.json"
+    },
+    {
+      "name": "hyprland",
+      "template": "hyprland-colors.lua",
+      "output": "~/.config/hypr/theme-active.lua",
+      "reload": "hyprctl reload"
+    },
+    {
+      "_comment": "MD3 colors for the Skwd shell widgets (skwd-bar etc)",
+      "name": "skwd",
+      "template": "quickshell-colors.json",
+      "output": "~/.cache/skwd/colors.json"
+    },
+    {
+      "name": "kitty",
+      "template": "kitty.conf",
+      "output": "~/.config/kitty/skwd-theme.conf",
+      "reload": "pkill -USR1 kitty"
+    },
+    {
+      "name": "vscode",
+      "template": "vscode-theme.json",
+      "output": "~/.vscode-oss/extensions/haikalllp.matugen-theme-1.0.2-universal/themes/matugen.json"
+    },
+    {
+      "name": "waybar",
+      "template": "waybar-colors.css",
+      "output": "~/.config/waybar/skwd-theme.css",
+      "reload": "pkill waybar && uwsm app -- waybar"
+    },
+    {
+      "name": "waybar-clock",
+      "template": "theme-clock.jsonc",
+      "output": "~/.config/waybar/theme-clock.jsonc",
+      "reload": "pkill waybar && uwsm app -- waybar"
+    },
+    {
+      "name": "rofi",
+      "template": "rofi-colors.rasi",
+      "output": "~/.config/rofi/rofi-colors.rasi"
+    }
+  ],
+  "components": {
+    "wallpaperSelector": {
+      "displayMode": "hex",
+      "sliceSpacing": -30,
+      "hexScrollStep": 1,
+      "customPresets": {
+        "C1_hex": {
+          "hexRadius": 125,
+          "hexRows": 3,
+          "hexCols": 7,
+          "hexScrollStep": 1,
+          "hexArc": false,
+          "hexArcIntensity": 1.2
+        }
+      },
+      "sliceHeight": 270,
+      "roundCorners": true,
+      "expandedWidth": 480,
+      "sliceWidth": 68,
+      "visibleCount": 18,
+      "skewOffset": 20,
+      "wallhavenRows": 2,
+      "hexArc": false,
+      "hexCols": 7,
+      "hexRows": 3,
+      "hexRadius": 125,
+      "hexArcIntensity": 1.2
+    }
+  },
+  "wallpaperMute": true,
+  "pickOnlyMode": false,
+  "externalWallpaperCommand": "",
+  "postProcessing": [
+    {
+      "command": "~/.local/bin/skwd-postprocess",
+      "type": "all"
+    }
+  ],
+  "performance": {
+    "imageOptimizePreset": "quality",
+    "imageOptimizeResolution": "4k",
+    "videoConvertPreset": "balanced",
+    "videoConvertResolution": "2k",
+    "autoOptimizeImages": false,
+    "autoConvertVideos": false,
+    "imageTrashDays": 7,
+    "videoTrashDays": 7,
+    "autoDeleteImageTrash": false,
+    "autoDeleteVideoTrash": false
+  },
+  "paper": {
+    "engine": "awww",
+    "awww": {
+      "transitionType": "random",
+      "transitionDurationMs": 1000,
+      "filter": "Lanczos3"
+    }
+  },
+  "display": {
+    "fillMode": "fill"
+  }
+}

@@ -1,0 +1,15 @@
+local vars = require("hypr.vars")
+local home = os.getenv("HOME")
+
+hl.bind("CTRL + ESCAPE",     hl.dsp.exec_cmd("sh -c 'killall waybar || uwsm app -- waybar'"),          { description = "Toggle Waybar" })
+hl.bind("SUPER + X",         hl.dsp.exec_cmd(home .. "/.local/bin/hypr-logout"),                       { description = "Logout" })
+hl.bind("SUPER + SHIFT + V", hl.dsp.exec_cmd(home .. "/.local/bin/monitor-mirror-toggle"),             { description = "Toggle Monitor Mirror" })
+hl.bind("SUPER + N",         hl.dsp.exec_cmd(home .. "/.local/bin/toggle-nightlight"),                 { description = "Toggle Nightlight" })
+hl.bind("SUPER + SHIFT + I", hl.dsp.exec_cmd(home .. "/.local/bin/toggle-idle"),                       { description = "Toggle Idle Prevention" })
+hl.bind("SUPER + D",         hl.dsp.exec_cmd(home .. "/.local/bin/notification-toggle"),               { description = "Dismiss Notifications" })
+hl.bind("SUPER + F10",       hl.dsp.exec_cmd(home .. "/.local/bin/audio-switch"),                      { description = "Switch Audio Output" })
+hl.bind("SUPER + V",         hl.dsp.exec_cmd(home .. "/.config/rofi/clipboard/clipboard-menu.sh"),     { description = "Clipboard History" })
+hl.bind("SUPER + ALT + V",   hl.dsp.exec_cmd(home .. "/.local/bin/clear-clipboard"),                   { description = "Clear Clipboard" })
+hl.bind("Caps_Lock",         hl.dsp.exec_cmd(home .. "/.local/bin/capslock-notify"),                   { description = "Capslock" })
+hl.bind("SUPER + slash",     hl.dsp.exec_cmd(home .. "/.config/rofi/keybindings/show-keybindings.sh"), { description = "Show Keybindings" })
+

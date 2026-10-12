@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# ============================================================
+# Show current Caps Lock status using dunst
+# ============================================================
+
+NOTIFY_ID=9999
+sleep 0.2
+check_capslock() {
+  hyprctl devices -j | jq -r '.keyboards[] | select(.main == true) | .capsLock'
+}
+
+if [ "$(check_capslock)" = "true" ]; then
+  dunstify -u normal -t 1000 -r $NOTIFY_ID "Caps Lock" "ON"
+else
+  dunstify -u normal -t 1000 -r $NOTIFY_ID "Caps Lock" "OFF"
+fi

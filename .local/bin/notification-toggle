@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Dismiss dunst notifications by level
+dunstctl close-all  
+LEVEL=$(dunstctl get-pause-level)
+
+if [ "$LEVEL" -eq 0 ]; then
+    dunstctl set-pause-level 40
+    dunstify -a "special_level" -u normal -t 1500 "Nocatifications OFF"
+else
+    dunstctl set-pause-level 0
+    dunstify -a "special_level" -u normal -t 1500 "Nocatifications ON"
+fi

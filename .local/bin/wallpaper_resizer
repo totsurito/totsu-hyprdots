@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+
+"""
+wallpaper_resizer.py - A Simple Wallpaper Resizer to webp
+"""
+
+import sys
+import argparse
+from PIL import Image
+from pathlib import Path
+from io import StringIO
+
+# ----- CONFIG -----
+WALLPAPER_DIR = Path.home()/"Downloads/New Wallpapers"
+TARGET_WIDTH = 2560
+TARGET_HEIGHT = 1440
+MIN_WIDTH = 1920
+MIN_HEIGHT = 1080
+QUALITY = 85
+ALIGMENT = 16
+SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
+LOG_FILE = Path.home()/".cache/wallpaper_resizer.log"
+# ----------
+def write_and_print(log: StringIO, msg: str = "") -> None:
+    log.write(msg + "\n")
+    print(msg)
+    return
+    
+def get_image_files(dir: Path) -> list:
+    img = []
+    for ext in SUPPORTED_EXTENSIONS:
+        img.extend(dir.glob(f"*{ext}"))
+        img.extend(dir.glob(f"*{ext.upper()}"))
+    return sorted(set(img))
+
+def generate_log(log: StringIO, log_file: Path=LOG_FILE) -> None:
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(log_file, "w", encoding="utf-8") as f:
+        f.write(log.getvalue())
+    print(f"Log guardado en {log_file}")
+    return
+
+def generate_msg(image_name: str, diagnostic: int, img_final_size: (int, int), img_refer_size: (int, int), convert: int = 0) -> str:
+    """
+    possible (diagnostic, convert):
+        (-1, n): Error, shouldn't happen
+        (0,  1): Resized only.
+        (0,  2): Resized and converted.
+        (1,  0): Nothing done.
+        (1,  2): Convert only.
+        (2,  0): Warning.
+        (2,  2): Warning and converted.
+    """
+    if diagnostic < 0: return f"{image_name}: Error. No change made to the file"
+    info = f"{image_name}: "
+    if diagnostic == 0: info += f"Resize - Resize from {img_refer_size} to {img_final_size}."
+    elif diagnostic == 2: info += f"Resize - Warning: LOW-RES: {img_final_size} < {img_refer_size}. "
+    if convert == 2: info += "Convert - Converted to WebP file. "
+    elif diagnostic == 1: info += "Nothing to do to the file."
+    return info
+
+def convert_to_webp(image_path: Path, diagnostic: int, dim: (int, int), quality: int, process: bool = False) -> int:
+    try:
+        if diagnostic < 0: return 0
+        if image_path.suffix.lower() == '.webp' and diagnostic > 0: return 0
+        if process:
+            with Image.open(image_path) as img:
+                resized_img = img.resize(dim, Image.Resampling.LANCZOS)
+                output_path = image_path.with_suffix('.webp')
+                resized_img.save(output_path, 'WEBP', quality=quality, optimize=True)
+                if image_path.suffix.lower() != '.webp': 
+                    image_path.unlink()
+                    return 2
+        return 1
+    except Exception as e: return 0
+
+def calculate_new_size(image_path: Path, target_width: int, target_height: int, aligment: int, min_width: int, min_height: int) -> (str, int, (int, int), (int, int)):
+    name = image_path.name
+    try:
+        with Image.open(image_path) as img:
+            width, height = img.width, img.height
+            if width < min_width or height < min_height: return name, 2, (min_width, min_height), (width, height)
+            # width/height <= 16/9. WIDTH Limit
+            if width/height <= target_width/target_height:
+                if width <= target_width: return name, 1, (target_width, target_height), (width, height)
+                new_width = target_width
+                new_height = (int(height*new_width/width)+aligment-1)//16*16
+            # width/height > 16/9. HEIGHT LIMIT
+            else:
+                if height  <= target_height: return name, 1, (target_width, target_height), (width, height)
+                new_height = target_height
+                new_width = (int(width*new_height/height)+aligment-1)//16*16
+            return name, 0, (width, height), (new_width, new_height)
+    except Exception: return name, -1, (-1, -1), (-1, -1)
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=f"Resize Wallpapers to a desired width ({TARGET_WIDTH} by default) or heights ({TARGET_HEIGHT} by default)"
+    )
+    parser.add_argument(
+        "-W", "--target-width",
+        type=int,
+        default=TARGET_WIDTH,
+        help=f"Target width in px (default: {TARGET_WIDTH})"
+    )
+    parser.add_argument(
+        "-H", "--target-height",
+        type=int,
+        default=TARGET_HEIGHT,
+        help=f"Target height in px (default: {TARGET_HEIGHT})"
+    )
+    parser.add_argument(
+        "-q", "--quality",
+        type=int,
+        default=QUALITY,
+        help=f"WebP quality, 1-100 (default: {QUALITY})"
+    )
+    parser.add_argument(
+        "-a", "--aligment",
+        type=int,
+        default=ALIGMENT,
+        help=f"WebP macroblocks size (default: {ALIGMENT})"
+    )
+    parser.add_argument(
+        "-d", "--directory",
+        type=str,
+        default=str(WALLPAPER_DIR),
+        help=f"Wallpaper directory (default: {WALLPAPER_DIR})"
+    )
+    parser.add_argument(
+        "--min-width",
+        type=int,
+        default=MIN_WIDTH,
+        help=f"Minimum width in px (default: {MIN_WIDTH})"
+    )
+    parser.add_argument(
+        "--min-height",
+        type=int,
+        default=MIN_HEIGHT,
+        help=f"Minimum height in px (default: {MIN_HEIGHT})"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Simulates the process without modifying files"
+    )
+    log = StringIO()
+    args = parser.parse_args()
+    wallpaper_dir = Path(args.directory)
+
+    if not wallpaper_dir.exists():
+        print(f"Error: Directory {wallpaper_dir} doesn't exist.")
+        return
+    
+    # ----- Config msg -----
+    write_and_print(log, "--------------------------------------------------------------------------------------")
+    write_and_print(log, "----------------------------------- Configuration ------------------------------------")
+    write_and_print(log, "--------------------------------------------------------------------------------------")
+    write_and_print(log, f"Directory:   {wallpaper_dir}")
+    write_and_print(log, f"Target size: {args.target_width}x{args.target_height}px")
+    write_and_print(log, f"Min size:    {args.min_width}x{args.min_height}px")
+    write_and_print(log, f"Quality:     {args.quality}")
+    write_and_print(log, f"Alignment:   {args.aligment}")
+    write_and_print(log, f"Dry run:     {args.dry_run}")
+    write_and_print(log)
+
+    # ----- Get IMG files -----
+    images = get_image_files(wallpaper_dir)
+    if not images:
+        print("ERROR: No images were found in the directory")
+        return
+    write_and_print(log, f"Total number of images found: {len(images)}")
+    processed = 0
+    for img in images:
+        name, diagnostic, refer_dim, final_dim = calculate_new_size(img, args.target_width, args.target_height, args.aligment, args.min_width, args.min_height)
+        convert = convert_to_webp(img, diagnostic, final_dim, args.quality, not args.dry_run)
+        if convert: processed += 1
+        write_and_print(log, generate_msg(name, diagnostic, final_dim, refer_dim, convert))
+    write_and_print(log)
+
+    # ----- Summany Output -----
+    write_and_print(log, "--------------------------------------------------------------------------------------")
+    write_and_print(log, "-------------------------------------- Summary ---------------------------------------")
+    write_and_print(log, "--------------------------------------------------------------------------------------")
+    write_and_print(log, f"Processed: {processed}/{len(images)}")
+    write_and_print(log, f"Skipped: {len(images)-processed}/{len(images)}")
+    
+    generate_log(log)
+
+    log.close()
+    return
+
+if __name__ == "__main__": main()

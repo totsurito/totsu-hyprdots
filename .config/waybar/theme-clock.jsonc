@@ -1,0 +1,18 @@
+{
+  "clock": {
+    "timezone": "Europe/Madrid",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "format": "{:%H:%M}",
+    "calendar": {
+      "mode": "month",
+      "mode-mon-col": 3,
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#ffb4ab'><b>{}</b></span>",
+        "days": "<span color='#d3bbff'>{}</span>",
+        "weekdays": "<span color='#958e9b'><b>{}</b></span>",
+        "today": "<span color='#e7e0e8'><b>{}</b></span>"
+      }
+    }
+  }
+}

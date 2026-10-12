@@ -1,0 +1,5 @@
+#!/bin/bash
+NOTIFY_ID=9996
+
+rm -rf ~/.cache/cliphist/db
+dunstify -u low -t 1500 -r $NOTIFY_ID "Clipboard" "Clipbroad Cleared"

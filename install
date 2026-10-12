@@ -1,0 +1,319 @@
+#!/bin/bash
+
+# ==================================================
+# Installer for my Hyprland dotfile
+# ==================================================
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0;0m'
+
+echo -e "${BLUE}"
+echo "=================================================="
+echo "            Hyprland Dotfile Installer            "
+echo "=================================================="
+echo -e "${NC}"
+
+# ===== Check if running on Arch Linux =====
+if ! command -v pacman &>/dev/null; then
+    echo -e "${RED}Error: This dotfile was designed to work on Arch Linux.${NC}"
+    echo -e "${BLUE}Cancelling.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Arch Linux detected.${NC}"
+
+# ===== Check if running as a normal user (not root) =====
+if [[ $EUID -eq 0 ]]; then
+    echo -e "${RED}Error: Do not run this script as root.${NC}"
+    echo -e "${YELLOW}Use your normal user (the script will use sudo when needed).${NC}"
+    echo -e "${BLUE}Cancelling.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Normal user detected.${NC}"
+
+# ===== Check if running inside Hyprland =====
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+    echo -e "${GREEN}Hyprland session detected.${NC}"
+    IN_HYPRLAND=true
+else
+    echo -e "${YELLOW}Not running inside Hyprland.${NC}"
+    echo -e "${YELLOW}Default wallpaper will not applied.${NC}"
+    IN_HYPRLAND=false
+fi
+
+# ===== Install dependencies =====
+echo -e "${BLUE}"
+echo "=================================================="
+echo "  Installing dependencies..."
+echo "=================================================="
+echo -e "${NC}"
+
+# === Official packages ===
+PACMAN_PKGS=(
+    # Compositor and environment
+    hyprland
+    hypridle
+    hyprlock
+    hyprsunset
+
+    # Bar ant notifications
+    waybar
+    dunst
+    libnotify
+
+    # Terminal
+    kitty
+
+    # Laucher
+    rofi
+
+    # Music
+    mpd
+    mpc
+    ncmpcpp
+
+    # Utilities
+    fastfetch
+    btop
+
+    # Audio
+    pipewire
+    pipewire-pulse
+    pipewire-alsa
+    wireplumber
+    pavucontrol
+
+    # Network
+    networkmanager
+    network-manager-applet
+
+    # Fonts
+    ttf-jetbrains-mono-nerd
+    ttf-hack-nerd
+
+    # System utilities
+    brightnessctl
+    playerctl
+    wl-clipboard
+    cliphist
+    grim
+    slurp
+    wf-recorder
+    base-devel
+    git
+    sddm
+    qt6-tools
+    nano
+    nautilus
+
+    # Python and dependencies for scripts
+    python
+    python-pip
+    jq
+    imagemagick
+    ffmpeg
+
+    # Polkit
+    polkit-gnome
+
+    # Portals
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
+
+    # Sesion manager
+    uwsm
+)
+
+echo -e "${YELLOW}Installing official packages...${NC}"
+sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
+
+# === AUR packages (if yay or paru is available) ===
+AUR_PKGS=(
+    zen-browser-bin
+    skwd-daemon-bin
+    skwd-wall
+    matugen-bin
+    awww
+)
+
+# == Install yay (AUR helper) if not present ==
+echo -e "${BLUE}"
+echo "=================================================="
+echo "  Checking AUR helper..."
+echo "=================================================="
+echo -e "${NC}"
+
+if ! command -v yay &>/dev/null && ! command -v paru &>/dev/null; then
+    echo -e "${YELLOW}No AUR helper found. Installing yay..."
+
+    # Clone and build yay
+    TMP_DIR=$(mktemp -d)
+    git clone https://aur.archlinux.org/yay.git "$TMP_DIR/yay"
+    cd "$TMP_DIR/yay"
+    makepkg -si --noconfirm
+    cd - > /dev/null
+    rm -rf "$TMP_DIR"
+
+    echo -e "${GREEN} yay installed.${NC}"
+else 
+    if command -v yay &>/dev/null; then
+        echo -e "${GREEN}yay already installed.${NC}"
+    elif command -v paru &>/dev/null; then
+        echo -e "${GREEN}paru already installed.${NC}"
+    fi
+fi
+
+if command -v yay &>/dev/null; then
+    echo -e "${YELLOW}Installing AUR packages with yay...${NC}"
+    yay -S --needed --noconfirm "${AUR_PKGS[@]}"
+elif command -v paru &>/dev/null; then
+    echo -e "${YELLOW}Installing AUR packages with paru...${NC}"
+    paru -S --needed --noconfirm "${AUR_PKGS[@]}"
+fi
+
+echo -e "${GREEN}Dependencies installed.${NC}"
+
+# ===== Copy configuration files =====
+echo -e "${BLUE}"
+echo "=================================================="
+echo "  Copying configuration files..."
+echo "=================================================="
+echo -e "${NC}"
+
+# === Backup existing config ===
+BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+
+for dir in dunst fastfetch hypr kitty mpd rofi skwd-wall waybar; do
+    if [[ -d "$HOME/.config/$dir" ]]; then
+        echo -e "${YELLOW}Backing up ~/.config/$dir -> $BACKUP_DIR/$dir${NC}"
+        cp -r "$HOME/.config/$dir" "$BACKUP_DIR/$dir"
+    fi
+done
+
+# === Copy New Configs ===
+mkdir -p "$HOME/.config"
+cp -r .config/* "$HOME/.config/"
+
+# === Copy Scripts ===
+mkdir -p "$HOME/.local/bin"
+cp -r ".local/bin/"* "$HOME/.local/bin" 2>/dev/null || true
+cp -r ".mpd/"* "$HOME/.mpd" 2>/dev/null || true
+chmod +x "$HOME/.local/bin/"* 2>/dev/null || true
+chmod +x "$HOME/.mpd/"* 2>/dev/null || true
+
+# === Copy .bashrc ===
+if [[ -f ".bashrc" ]]; then
+    cp ".bashrc" "$HOME/.bashrc"
+fi
+
+echo -e "${GREEN}Configuration files copied.${NC}"
+
+# ===== Enable services =====
+echo -e "${BLUE}"
+echo "=================================================="
+echo "  Enable services..."
+echo "=================================================="
+echo -e "${NC}"
+
+# === NetworkManager ===
+sudo systemctl enable --now NetworkManager
+
+# === SDDM ===
+sudo systemctl enable sddm
+
+# === mpd ===
+sudo systemctl enable mpd
+
+echo -e "${GREEN}Services enabled.${NC}"
+
+# ===== Applying default wallpaper and generate themes =====
+echo -e "${BLUE}"
+echo "=================================================="
+echo "  Applying default wallpaper..."
+echo "=================================================="
+echo -e "${NC}"
+
+# === Create wallpaper folder ===
+if [[ -d "$HOME/Pictures/WallpaperPC" ]];~then
+    echo -e "${YELLOW}Backing up Previus ~/Pictures/WallpaperPC -> $HOME/Pictures/PrevWallpaperPC${NC}"
+    cp -r "$HOME/Pictures/WallpaperPC" "$HOME/Pictures/PrevWallpaperPC"
+fi
+mkdir -p "$HOME/Pictures/WallpaperPC"
+
+cp -r "wallpapers" "$HOME/Pictures/WallpaperPC"
+echo -e "${GREEN}All Wallpaper copied.${NC}"
+
+# === Copy default wallpaper ===
+DEFAULT_WALLPAPER="$HOME/Pictures/WallpaperPC/Arknights_Amiya_01.webp"
+
+# === Apply wallpaper if there is one ===
+if [[ -n "$DEFAULT_WALLPAPER" && -f "$DEFAULT_WALLPAPER" ]]; then
+    if ! pgrep -x awww-daemon >/dev/null; then
+        echo -e "${YELLOW}Starting awww-daemon...${NC}"
+        awww-daemon &
+        sleep 1
+    fi
+
+    # == Apply the wallpaper with awww ==
+    echo -e "${YELLOW}Applying wallpaper with awww...${NC}"
+    awww img "$DEFAULT_WALLPAPER" --transition-type wipe --transition-duration 1 2>/dev/null || true
+
+    # == Update skwd-wall's cache ==
+    mkdir -p "$HOME/.cache/skwd-wall/wallpaper"
+    cp "$DEFAULT_WALLPAPER" "$HOME/.cache/skwd-wall/wallpaper/current.jpg"
+
+    # == Update lockscreen ==
+    cp "$DEFAULT_WALLPAPER" "$HOME/.config/hypr/hyprlock.jpg"
+    
+    echo -e "${GREEN}Wallpaper applied.${NC}"
+
+    # == Generate themes with Matugen ==
+    if command -v matugen &>/dev/null; then
+        echo -e "${YELLOW}Generating themes with Matugen...${NC}"
+        matugen image "$DEFAULT_WALLPAPER" 2>/dev/null || true
+        echo -e "${GREEN}Themes generated.${NC}"
+    else
+        echo -e "${YELLOW}Matugen not found. Skipping theme generation.${NC}"
+    fi
+    
+    # == If we're inside Hyprland, reload services ==
+    if [[ "$IN_HYPRLAND" == true ]]; then
+        echo -e "${YELLOW}Reloading services...${NC}"
+
+        ### Reload Hyprland
+        hyprctl reload 2>/dev/null || true
+
+        ### Restart Waybar
+        pkill waybar 2>/dev/null || true
+        sleep 0.1
+        uwsm app -- waybar 2>/dev/null &
+
+        ### Restart Dunst
+        pkill dunst 2>/dev/null || true
+        sleep 0.1
+        uwsm app -- dunst 2>/dev/null &
+
+        echo -e "${GREEN}Services reloaded.${NC}"
+    fi
+fi
+
+# ===== Final message =====
+echo -e "${GREEN}"
+echo "=================================================="
+echo "  Installation complete!"
+echo "=================================================="
+echo -e "${NC}"
+echo -e "Configuration files have been copied to:"
+echo -e "  ~/.config/"
+echo -e "  ~/.local/bin/"
+echo ""
+echo -e "A backup of your previous configuration has been created at:"
+echo -e "  $BACKUP_DIR"
+echo ""
+echo -e "${YELLOW}Restart Hyprland or your computer to apply the changes.${NC}"
+echo ""
