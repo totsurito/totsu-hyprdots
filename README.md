@@ -10,6 +10,10 @@ My personal Arch Linux + Hyprland configuration, with dynamic theming based on t
 
 *Note: All other dependencies (Hyprland, UWSM, Waybar, etc.) are installed automatically by the `install.sh` script.*
 
+## Sreenshots
+![Screenshot_01](screenshot/Screenshot_01.png)
+![Screenshot_02](screenshot/Screenshot_02.png)
+
 ## What's Included
 
 | Component | Description |
