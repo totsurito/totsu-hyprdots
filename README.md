@@ -2,15 +2,15 @@
 
 My personal Arch Linux + Hyprland configuration, with dynamic theming based on the wallpaper.
 
-## Reqirements
+## Requirements
 
 - **Arch Linux** (or Arch-based distro)
 - **Internet connection** (to install packages)
 - **git** (`sudo pacman -S git`)
 
-*Note: All other dependencies (Hyprland, UWSM, Waybar, etc.) are installed automatically by the `install.sh` script.*
+*Note: All other dependencies (Hyprland, UWSM, Waybar, etc.) are installed automatically by the `install` script.*
 
-## Sreenshots
+## Screenshots
 ![Screenshot_01](screenshot/Screenshot_01.png)
 ![Screenshot_02](screenshot/Screenshot_02.png)
 
@@ -84,7 +84,7 @@ Place your wallpapers in:
 ~/Pictures/WallpaperPC/
 ```
 
-Then use skwd-wall to select one. The themes will be geenrated automatically.
+Then use skwd-wall to select one. The themes will be generated automatically.
 
 ## Keybindings
 
@@ -104,7 +104,7 @@ Then use skwd-wall to select one. The themes will be geenrated automatically.
 
 ## Notes
 - This dotfile was built on top of an existing one, with many customizations.
-- Some scripts maybe are specific to my workflow.
+- Some scripts may be specific to my workflow.
 - Feel free to fork it and adapt it to your needs.
 
 ## Credits
