@@ -245,7 +245,7 @@ if [[ -d "$HOME/Pictures/WallpaperPC" ]]; then
 fi
 mkdir -p "$HOME/Pictures/WallpaperPC"
 
-cp -r "wallpapers/*" "$HOME/Pictures/WallpaperPC"
+cp -r "wallpapers/." "$HOME/Pictures/WallpaperPC"
 echo -e "${GREEN}All Wallpaper copied.${NC}"
 
 # === Copy default wallpaper ===
