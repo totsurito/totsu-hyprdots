@@ -1,0 +1,79 @@
+/*****----- Global Properties -----*****/
+@import                 "rofi-colors.rasi"
+
+/*****----- Main Window -----*****/
+window {
+    location:           center;
+    anchor:             center;
+    fullscreen:         false;
+    width:              16%;
+    border-radius:      16px;
+    cursor:             "default";
+    background-color:   black / 64%;
+    border-color:       @selected;
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    spacing:            16px;
+    padding:            16px;
+    background-color:   transparent;
+    children:           [ "message", "listview" ];
+}
+
+/*****----- Message -----*****/
+message {
+    margin:             0px;
+    padding:            16px;
+    border-radius:      16px;
+    background-color:   transparent;
+    text-color:         @foreground;
+}
+textbox {
+    background-color:   inherit;
+    text-color:         inherit;
+    vertical-align:     0.5;
+    horizontal-align:   0.5;
+    placeholder-color:  @foreground;
+    blink:              true;
+    markup:             true;
+}
+
+/*****----- Listview -----*****/
+listview {
+    columns:            2;
+    lines:              1;
+    cycle:              true;
+    dynamic:            true;
+    scrollbar:          false;
+    layout:             vertical;
+    reverse:            false;
+    fixed-height:       true;
+    fixed-columns:      true;
+    spacing:            16px;
+    background-color:   transparent;
+    text-color:         @foreground;
+    cursor:             "default";
+}
+
+/*****----- Elements -----*****/
+element {
+    padding:            32px 16px 32px 8px;
+    border-radius:      20px;
+    background-color:   transparent;
+    text-color:         @foreground;
+    cursor:             pointer;
+}
+element-text {
+    font:               "JetBrainsMono Nerd Font 36";
+    background-color:   transparent;
+    text-color:         inherit;
+    cursor:             inherit;
+    vertical-align:     0.5;
+    horizontal-align:   0.5;
+}
+element selected.normal {
+    border:             0px 0px 12px 12px;
+    border-color:       @selected;
+    text-color:         @selected;
+}

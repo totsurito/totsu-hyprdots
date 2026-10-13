@@ -1,0 +1,62 @@
+/*****----- Global Properties -----*****/
+@import                 "rofi-colors.rasi"
+
+/*****----- Main Window -----*****/
+window {
+    fullscreen:         false;
+    transparency:       "real";
+    cursor:             "default";
+    background-color:   black / 64%;
+    border:             0px;
+    location:           center;
+    anchor:             center;
+    border:             2px;
+    border-radius:      32px;
+    width:              40%;
+    border-color:       @selected;
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    margin:             16px;
+    background-color:   transparent;
+    spacing:            16px;
+    orientation:        vertical;
+    children:           [ "listview" ];
+}
+
+/*****----- Listview -----*****/
+listview {
+    columns:            5;
+    lines:              1;
+    scrollbar:          false;
+    layout:             vertical;
+    reverse:            false;
+    fixed-height:       true;
+    fixed-columns:      true;
+    spacing:            8px;
+    background-color:   transparent;
+}
+
+/*****----- Elements -----*****/
+element {
+    enabled:            true;
+    padding:            32px 16px;
+    margin:             8px;
+    border-radius:      16px 32px 16px 32px;
+    background-color:   transparent;
+    text-color:         @foreground;
+}
+element-text {
+    font:               "JetBrainsMono Nerd Font 36";
+    background-color:   transparent;
+    text-color:         inherit;
+    cursor:             inherit;
+    vertical-align:     0.5;
+    horizontal-align:   0.5;
+}
+element selected.normal {
+    border:             0px 0px 12px 12px;
+    border-color:       @selected;
+    text-color:         @selected;
+}

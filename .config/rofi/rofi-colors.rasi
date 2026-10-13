@@ -1,0 +1,4 @@
+* {
+    foreground:     #e3e2e7;
+    selected:       #b2c5ff;
+}
