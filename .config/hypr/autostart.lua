@@ -9,7 +9,8 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("uwsm app -- awww-daemon")
   hl.exec_cmd("uwsm app -- skwd-daemon")
   hl.exec_cmd("uwsm app -- " .. vars.terminal)
-  hl.exec_cmd("~/.mpd/autostart.sh")
+  hl.exec_cmd("mpd --no-daemon --stdout --verbose")
+  hl.exec_cmd("sh ~/.mpd/autostart.sh")
 
   -- Slow-app-launch fix: import env into systemd + dbus
   hl.exec_cmd([[sh -c 'systemctl --user import-environment $(env | cut -d= -f1)']])
