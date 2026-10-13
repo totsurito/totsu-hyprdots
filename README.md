@@ -64,12 +64,14 @@ git clone https://github.com/totsurito/totsu-hyprdots.git ~/dotfiles
 ```
 2. Copy the configs:
 ```
-cp -r ~/dotfiles/.config/* ~/.config/
-cp -r ~/dotfiles/.local/bin/* ~/.local/bin/
+cp -r ~/dotfiles/.config/. ~/.config/
+cp -r ~/dotfiles/.local/bin/. ~/.local/bin/
+cp -r ~/dotfiles/.mpd/. ~/.mpd/
 ```
 3. Give execute permissions to scripts:
 ```
-chmod +x ~/.local/bin/*
+chmod +x ~/.local/bin/.
+chmod +x ~/.mpd/.
 ```
 4.Restart Hyprland or your computer.
 
