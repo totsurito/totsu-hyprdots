@@ -226,9 +226,6 @@ sudo systemctl enable --now NetworkManager
 # === SDDM ===
 sudo systemctl enable sddm
 
-# === mpd ===
-sudo systemctl enable mpd
-
 echo -e "${GREEN}Services enabled.${NC}"
 
 # ===== Applying default wallpaper and generate themes =====
