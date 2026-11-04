@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+
+import subprocess
+import argparse
+from mpd import MPDClient
+from wcwidth import wcswidth
+
+MPD_HOST = "localhost"
+MPD_PORT = 6600
+
+def connect_client() -> MPDClient:
+    client = MPDClient()
+    try: client.connect(MPD_HOST, MPD_PORT)
+    except Exception as e:
+        print(f"Error: Couldn't connect to MPD. {e}")
+        return
+    return client
+
+def fzf(options) -> str:
+    if not options: return ''
+    input_text = "\n".join(options)
+    try:
+        result = subprocess.run(
+            ["fzf", "--prompt=Choose: ", "--height=50%", "--reverse", "--delimiter=|", "--exact"],
+            input=input_text,
+            text=True,
+            capture_output=True,
+            check=True
+        )
+        selection = result.stdout.strip()
+        return selection
+    except subprocess.CalledProcessError:
+        print("Canceled.")
+        return ''
+
+def padding_fill(text: str, max_len: int) -> str:
+    real_len = wcswidth(text)
+    if real_len >= max_len: return text
+    return text + (' ' * (max_len-real_len))
+
+def get_all_music() -> tuple:
+    client = connect_client()
+    all_ms = client.listallinfo()
+    max_len_artists = max(wcswidth(ms.get('artist', 'Unknown Artist')) for ms in all_ms)
+    max_len_title = max(wcswidth(ms.get('title', 'Unknown')) for ms in all_ms)
+    ms_list = []
+    file_map = {}
+    for ms in all_ms: 
+        if 'file' not in ms: continue
+        line = f"{padding_fill(ms.get('title', 'Unknown'), max_len_title)} | {padding_fill(ms.get('artist', 'Unknown Artist'), max_len_artists)} | {ms.get('album', 'Unknown Album')}"
+        ms_list.append(line)
+        file_map[line] = ms['file']
+    return ms_list, file_map
+
+def shuffle_playback() -> None:
+    client = connect_client()
+    client.clear()
+    client.add("/")
+    client.shuffle()
+    client.play()
+    print(f"Suffle Playing...")
+    return
+
+def start_with(file: str) -> None:
+    client = connect_client()
+    client.clear()
+    client.add("/")
+    client.shuffle()
+    all_ms = client.playlistinfo()
+    idx = next((i for i, ms in enumerate(all_ms) if ms.get('file')==file), None)
+    if idx is None: return
+    client.move(idx, 0)
+    client.play()
+    print(f"Playing {file}...")
+    return
+
+def add_next(file: str) -> None:
+    client = connect_client()
+    status = client.status()
+    now_idx = int(status.get('song', -1))
+    all_ms = client.playlistinfo()
+    idx = next((i for i, ms in enumerate(all_ms) if ms.get('file')==file), None)
+    if idx is None:
+        client.add(file)
+        idx = len(all_ms)
+    if idx == now_idx: 
+        print(f"Warning - {file} is already playing.")
+        return
+    client.move(idx, now_idx if idx < now_idx else now_idx+1)
+    print(f"{file} Queued next...")
+    return
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="MPD music manager with fzf."
+    )
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "-p", "--play",
+        action="store_true",
+        help="Select to Play"
+    )
+    group.add_argument(
+        "-n", "--next",
+        action="store_true",
+        help="Select to Add to Play Next"
+    )
+    group.add_argument(
+        "-s", "--shuffle",
+        action="store_true",
+        help="Shuffle Playback"
+    )
+
+    args = parser.parse_args()
+    if args.play or args.next:
+        fzf_options, file_map = get_all_music()
+        selection = fzf(options=fzf_options)
+        if not selection:
+            print("No selection made. Canceled")
+            return
+        file = file_map[selection]
+        if args.play: start_with(file=file)
+        if args.next: add_next(file=file)
+    else: shuffle_playback()
+    return
+
+if __name__ == "__main__":
+    main()
