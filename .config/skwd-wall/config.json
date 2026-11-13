@@ -13,7 +13,7 @@
     "wallpaperPerMonitor": false
   },
   "paths": {
-    "wallpaper": "/home/rito/Pictures/WallpaperPC",
+    "wallpaper": "~/Pictures/WallpaperPC",
     "videoWallpaper": "~/videowalls",
     "cache": "",
     "templates": "",
